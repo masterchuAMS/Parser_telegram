@@ -57,7 +57,8 @@ find_keywords запускает скрипт на SQL, чтобы найти к
 cd ~/Downloads  # or anywhere else
 git clone https://github.com/masterchuAMS/Parser_telegram
 cd Parser_telegram
-pip install .
+pip install poetry
+poetry install
 ```
 Обязательно нужно подключиться в Telegram API, получить token и api.
 
