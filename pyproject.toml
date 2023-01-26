@@ -1,12 +1,15 @@
 [tool.poetry]
-name = "my project"
+name = "parser-telegram"
 version = "0.1.0"
 description = ""
 authors = ["Coriolanus <savvarabota@gmail.com>"]
 readme = "README.md"
+packages = [{include = "parser_telegram"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+Telethon = "^1.26.1"
+DateTime = "^5.0"
 
 
 [build-system]
