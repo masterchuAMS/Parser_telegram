@@ -1,28 +1,30 @@
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetHistoryRequest
 import sqlite3
-from telegram_bot import api_id_user, api_hash_user, phone_user
 import datetime
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def parser(name_group):
-
     # создаем базу данных
     db = sqlite3.connect('server.db')
     sql = db.cursor()
 
-    sql.execute("CREATE TABLE IF NOT EXISTS messages_of_chats(id INTEGER PRIMARY KEY AUTOINCREMENT,name_of_chat TEXT,message TEXT,date DATE)")
+    sql.execute(
+        'CREATE TABLE IF NOT EXISTS messages_of_chats(id INTEGER PRIMARY KEY AUTOINCREMENT,name_of_chat TEXT,message TEXT,date DATE)')
 
     # Обязательно подключить к Telegram API
-    api_id = api_id_user
-    api_hash = api_hash_user
-    phone = phone_user
+    api_id = os.getenv('api_id_user')
+    api_hash = os.getenv('api_hash_user')
+    phone = os.getenv('api_hash_user')
 
     client = TelegramClient(phone, api_id, api_hash)
     client.start()
-
 
     chats = []
     last_date = None
@@ -46,14 +48,12 @@ def parser(name_group):
             continue
 
     for g in chats:
-        if g.title ==name_group:
+        if g.title == name_group:
             print(g)
-            target_group= g
+            target_group = g
 
-
-
-    #Переменные для GetHistoryRequest
-    all_messages=[]
+    # Переменные для GetHistoryRequest
+    all_messages = []
     offset_id = 0
     limit = 1000
     total_messages = 0
@@ -81,16 +81,17 @@ def parser(name_group):
         offset_id = messages[len(messages) - 1].id
         if total_count_limit != 0 and total_messages >= total_count_limit:
             break
-    print("Сохраняем сообщения в базу данных..")  # Cообщение для пользователя о том, что начался парсинг сообщений.
+    print('Сохраняем сообщения в базу данных..')  # Cообщение для пользователя о том, что начался парсинг сообщений.
 
-    #Добавляем сообщения в базу данных
+    # Добавляем сообщения в базу данных
     count1 = 0
     for i in all_messages:
         info = sql.execute(f'SELECT message FROM messages_of_chats WHERE message=?', (i,))
         if info.fetchone() is None:
             x = datetime.datetime.now()
-            count1+=1
-            sql.execute(f"""INSERT INTO messages_of_chats (id ,name_of_chat, message,date) VALUES (NULL,?,?,?)""",(name_group,i,x))
+            count1 += 1
+            sql.execute(f'INSERT INTO messages_of_chats (id ,name_of_chat, message,date) VALUES (NULL,?,?,?)',
+                        (name_group, i, x))
             db.commit()
         else:
             pass
@@ -98,13 +99,12 @@ def parser(name_group):
     sql.close()
     db.close()
 
-
-    print("Парсинг сообщений группы успешно выполнен.")
+    print('Парсинг сообщений группы успешно выполнен.')
 
     client.disconnect()
 
 
-parser('Find a Job Abroad LinkedIn')
+parser('Job Abroad LinkedIn')
 parser('МИР КРЕАТОРОВ')
 parser('Точно продюсеры')
 parser('Реальный запуск')

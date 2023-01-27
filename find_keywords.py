@@ -1,8 +1,11 @@
 import requests
-from telegram_bot import token
 import sqlite3
 import datetime
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 
@@ -24,8 +27,9 @@ def send_telegram_message(i,name_group):
 
     select_users = "SELECT id_users FROM id_of_users"
     users = execute_read_query(sql, select_users)
-
+    token = os.getenv('token')
     for user in users:
+        token = os.getenv('token')
         url = f'https://api.telegram.org/bot{token}/sendMessage'
         responce_name_group = requests.post(url=url, data={'chat_id': user, 'text': name_group, })
         responce = requests.post(url=url, data={'chat_id': user, 'text': i, })
