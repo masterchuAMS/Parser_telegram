@@ -1,8 +1,11 @@
 import telebot
 import sqlite3
-from telegram_bot import token
+import os
+from dotenv import load_dotenv
+load_dotenv()
 import datetime
-token_hello_file = token #Вставьте Ваш токен, полученный от BotFather
+
+token=os.getenv('token') #Вставьте Ваш токен, полученный от BotFather
 bot = telebot.TeleBot(token)
 
 
